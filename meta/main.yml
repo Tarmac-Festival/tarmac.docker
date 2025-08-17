@@ -1,0 +1,12 @@
+galaxy_info:
+  author: Gregor Michels
+  description: installs docker onto ubuntu 24.04 x86-64
+  company: TARMAC e.V.
+
+  license: MIT
+
+  min_ansible_version: 2.1
+
+  galaxy_tags: []
+
+dependencies: []
