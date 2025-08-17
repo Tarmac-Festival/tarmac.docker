@@ -1,0 +1,35 @@
+---
+- name: assert that we are on ubuntu noble x86-64
+  ansible.builtin.assert:
+    that:
+      - ansible_architecture == "x86_64"
+      - ansible_distribution == "Ubuntu"
+      - ansible_distribution_release == "noble"
+
+- name: prepare keyrings folder
+  ansible.builtin.file:
+    state: directory
+    path: /etc/apt/keyrings
+    mode: 0755
+    owner: root
+    group: root
+
+- name: install docker repo key
+  copy:
+    src: files/docker_repo.gpg
+    dest: /etc/apt/keyrings/docker.gpg
+
+- name: add docker ce repo
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    filename: "docker"
+
+- name: install docker
+  ansible.builtin.package:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+      - python3-docker
