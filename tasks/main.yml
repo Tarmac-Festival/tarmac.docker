@@ -33,3 +33,24 @@
       - docker-buildx-plugin
       - docker-compose-plugin
       - python3-docker
+
+- name: install docker compose systemd unit
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/docker-compose@.service
+    content: |
+      [Unit]
+      Description=%i service with docker compose
+      PartOf=docker.service
+      After=docker.service
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=true
+      WorkingDirectory=/opt%i
+      ExecStart=/usr/local/bin/docker-compose up -d --remove-orphans --build
+      ExecStop=/usr/local/bin/docker-compose down
+
+      [Install]
+      WantedBy=multi-user.target
+  notify:
+    - systemctl daemon-reload
